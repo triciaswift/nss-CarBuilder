@@ -5,4 +5,5 @@ public class WheelsDTO
     public int Id { get; set; }
     public decimal Price { get; set; }
     public string Style { get; set; }
+    public List<OrderDTO> Orders { get; set; }
 }
