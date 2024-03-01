@@ -134,18 +134,21 @@ app.MapGet("/orders", () =>
                 Price = wheel.Price,
                 Style = wheel.Style
             },
+            TechnologyId = o.TechnologyId,
             Technology = technology == null ? null : new TechnologyDTO
             {
                 Id = technology.Id,
                 Price = technology.Price,
                 Package = technology.Package
             },
+            InteriorId = o.InteriorId,
             Interior = interior == null ? null : new InteriorDTO
             {
                 Id = interior.Id,
                 Price = interior.Price,
                 Material = interior.Material
             },
+            PaintId = o.PaintId,
             PaintColor = paintColor == null ? null : new PaintColorDTO
             {
                 Id = paintColor.Id,
