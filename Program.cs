@@ -43,6 +43,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+//! CORS - Cross-Origin Resource Sharing
+// ports that the client and server are served from are different
 builder.Services.AddCors();
 
 var app = builder.Build();
@@ -52,6 +54,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    //! add CORS here as well
     app.UseCors(options =>
     {
         options.AllowAnyOrigin();
