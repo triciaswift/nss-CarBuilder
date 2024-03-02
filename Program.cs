@@ -113,9 +113,12 @@ app.MapGet("/paintcolors", () =>
     });
 });
 
-// GET - retrieves all orders & their properties
+// GET - retrieves all unfulfilled orders & their properties
 app.MapGet("/orders", () =>
 {
+    // filter out orders marked as fulfilled
+    orders = orders.Where(o => o.Fulfilled == false).ToList();
+    
     return orders.Select(o => 
     {
         Wheels? wheel = wheels.FirstOrDefault(w => w.Id == o.WheelId);
@@ -154,16 +157,65 @@ app.MapGet("/orders", () =>
                 Id = paintColor.Id,
                 Price = paintColor.Price,
                 Color = paintColor.Color
-            }
+            },
+        Fulfilled = o.Fulfilled
         };
+    });
+});
+
+// GET - retrieve a single order
+app.MapGet("/orders/{id}", (int id) =>
+{
+    Order order = orders.FirstOrDefault(o => o.Id == id);
+    if (order == null)
+    {
+        return Results.NotFound();
+    }
+
+    Wheels? wheel = wheels.FirstOrDefault(w => w.Id == order.WheelId);
+    Technology? technology = technologies.FirstOrDefault(t => t.Id == order.TechnologyId);
+    Interior? interior = interiors.FirstOrDefault(i => i.Id == order.InteriorId);
+    PaintColor? paintColor = paintColors.FirstOrDefault(pc => pc.Id == order.PaintId);
+
+    return Results.Ok(new OrderDTO
+    {
+        Id = order.Id,
+        Timestamp = order.Timestamp,
+        WheelId = order.WheelId,
+        Wheels = wheel == null ? null : new WheelsDTO
+        {
+            Id = wheel.Id,
+            Price = wheel.Price,
+            Style = wheel.Style
+        },
+        TechnologyId = order.TechnologyId,
+        Technology = technology == null ? null : new TechnologyDTO
+        {
+            Id = technology.Id,
+            Price = technology.Price,
+            Package = technology.Package
+        },
+        InteriorId = order.InteriorId,
+        Interior = interior == null ? null : new InteriorDTO
+        {
+            Id = interior.Id,
+            Price = interior.Price,
+            Material = interior.Material
+        },
+        PaintId = order.PaintId,
+        PaintColor = paintColor == null ? null : new PaintColorDTO
+        {
+            Id = paintColor.Id,
+            Price = paintColor.Price,
+            Color = paintColor.Color
+        },
+        Fulfilled = order.Fulfilled
     });
 });
 
 // POST - creates a new order
 app.MapPost("/orders", (Order order) =>
 {
-
-
     Wheels? wheel = wheels.FirstOrDefault(w => w.Id == order.WheelId);
     Technology? technology = technologies.FirstOrDefault(t => t.Id == order.TechnologyId);
     Interior? interior = interiors.FirstOrDefault(i => i.Id == order.InteriorId);
@@ -210,8 +262,17 @@ app.MapPost("/orders", (Order order) =>
             Id = paintColor.Id,
             Price = paintColor.Price,
             Color = paintColor.Color
-        }
+        },
+        Fulfilled = false
     });
+});
+
+// Fulfilled Orders
+app.MapPost("/orders/{id}/fulfill", (int id) => 
+{
+    Order? orderToFulfill = orders.FirstOrDefault(o => o.Id == id);
+
+    orderToFulfill.Fulfilled = true;
 });
 
 app.Run();

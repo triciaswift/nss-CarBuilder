@@ -12,7 +12,7 @@ public class OrderDTO
     public PaintColorDTO? PaintColor { get; set; }
     public int InteriorId { get; set; }
     public InteriorDTO? Interior { get; set; }
-
+    public bool Fulfilled { get; set; }
     public decimal TotalCost
     {
         get
